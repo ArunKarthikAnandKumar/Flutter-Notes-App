@@ -31,64 +31,52 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: const Text('Register'),
-      ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            return Column(
-              children: [
-                TextField(
-                  controller: _email,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(hintText: "Enter Your email"),
-                ),
-                TextField(
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  controller: _password,
-                  decoration: const InputDecoration(hintText: "Enter Your Password"),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    final email = _email.text;
-                    final password = _password.text;
+      appBar: AppBar(title: Text('Register '),
+      backgroundColor: Colors.lightBlue,),
+      body: Column(
+        children: [
+          TextField(
+            controller: _email,
+            enableSuggestions: false,
+            autocorrect: false,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(hintText: "    Enter Your email"),
+          ),
+          TextField(
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+            controller: _password,
+            decoration: const InputDecoration(hintText: "    Enter Your Password"),
+          ),
+          TextButton(
+            onPressed: () async {
+              final email = _email.text;
+              final password = _password.text;
 
-                    try {
-                      final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                        email: email,
-                        password: password,
-                      );
-                      devtools.log('User registered: ${userCredential.user?.email}');
-                    }on FirebaseAuthException catch (e) {
-                      if(e.code=='weak-password'){
-                        devtools.log('Weak password');
-                      }else if(e.code=='email-already-in-use'){
-                        devtools.log('Email already in use');
-                      }else {
-                        devtools.log('Fire base authentication exception');
-                        devtools.log('Error: $e ');
-                      }
-                    }
-                  },
-                  child: const Text('Register'),
-                ),
-              ],
-            );
-          } else {
-            return const Center(child: Text('Something went wrong'));
-          }
-        },
+              try {
+                final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                  email: email,
+                  password: password,
+                );
+                devtools.log('User registered: ${userCredential.user?.email}');
+              }on FirebaseAuthException catch (e) {
+                if(e.code=='weak-password'){
+                  devtools.log('Weak password');
+                }else if(e.code=='email-already-in-use'){
+                  devtools.log('Email already in use');
+                }else {
+                  devtools.log('Fire base authentication exception');
+                  devtools.log('Error: $e ');
+                }
+              }
+            },
+            child: const Text('Register'),
+          ),
+          TextButton(onPressed: (){
+            Navigator.of(context).pushNamedAndRemoveUntil('/login/',(route)=>false);
+          }, child: const Text('Already registered? Login Here'))
+        ],
       ),
     );
   }

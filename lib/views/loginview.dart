@@ -34,68 +34,58 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
         title: const Text('Login'),
+        backgroundColor: Colors.lightBlue,
       ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            return Column(
-              children: [
-                TextField(
-                  controller: _email,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(hintText: "Enter Your email"),
-                ),
-                TextField(
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  controller: _password,
-                  decoration: const InputDecoration(hintText: "Enter Your Password"),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    final email = _email.text;
-                    final password = _password.text;
+      body: Column(
+        children: [
+          TextField(
+            controller: _email,
+            enableSuggestions: false,
+            autocorrect: false,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(hintText: "    Enter Your email"),
+          ),
+          TextField(
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+            controller: _password,
+            decoration: const InputDecoration(hintText: "    Enter Your Password"),
+          ),
+          TextButton(
+            onPressed: () async {
+              final email = _email.text;
+              final password = _password.text;
 
-                    try {
-                      final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                        email: email,
-                        password: password,
-                      );
-                      devtools.log('User registered: ${userCredential.user?.email}');
-                    } on FirebaseAuthException catch(e){
-                      if(e.code=='user-not-found'){
-                        devtools.log('User Not Found');
-                      } else if(e.code=='wrong-password'){
-                        devtools.log('Wrong password');
-                      }
-                      devtools.log('Fire base authentication exception');
-                      devtools.log('Error: $e ');
+              try {
+                final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  email: email,
+                  password: password,
+                );
+                devtools.log('User registered: ${userCredential.user?.email}');
+              } on FirebaseAuthException catch(e){
+                if(e.code=='user-not-found'){
+                  devtools.log('User Not Found');
+                } else if(e.code=='wrong-password'){
+                  devtools.log('Wrong password');
+                }
+                devtools.log('Fire base authentication exception');
+                devtools.log('Error: $e ');
 
-                    }
-                    catch (e) {
+              }
+              catch (e) {
 
-                      devtools.log('Something Bad Happened');
-                      devtools.log('Error: $e');
-                    }
-                  },
-                  child: const Text('Login'),
-                ),
-              ],
-            );
-          } else {
-            return const Center(child: Text('Something went wrong'));
-          }
-        },
+                devtools.log('Something Bad Happened');
+                devtools.log('Error: $e');
+              }
+            },
+            child: const Text('Login'),
+          ),
+          TextButton(onPressed: (){
+            Navigator.of(context).pushNamedAndRemoveUntil('/register/', (route)=>false);
+          }, child: Text('Not Registered yet? Register Here'))
+        ],
       ),
     );
   }
