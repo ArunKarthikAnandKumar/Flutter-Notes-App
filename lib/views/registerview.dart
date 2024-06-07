@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:mynotes_app/firebase_options.dart';
 import 'dart:developer' as devtools show log;
+
+import 'package:mynotes_app/constants/routes.dart';
+
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
 
@@ -31,8 +32,10 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Register '),
-      backgroundColor: Colors.lightBlue,),
+      appBar: AppBar(
+        title: const Text('Register '),
+        backgroundColor: Colors.lightBlue,
+      ),
       body: Column(
         children: [
           TextField(
@@ -47,7 +50,8 @@ class _RegisterViewState extends State<RegisterView> {
             enableSuggestions: false,
             autocorrect: false,
             controller: _password,
-            decoration: const InputDecoration(hintText: "    Enter Your Password"),
+            decoration:
+                const InputDecoration(hintText: "    Enter Your Password"),
           ),
           TextButton(
             onPressed: () async {
@@ -55,17 +59,18 @@ class _RegisterViewState extends State<RegisterView> {
               final password = _password.text;
 
               try {
-                final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                final userCredential =
+                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
                 devtools.log('User registered: ${userCredential.user?.email}');
-              }on FirebaseAuthException catch (e) {
-                if(e.code=='weak-password'){
+              } on FirebaseAuthException catch (e) {
+                if (e.code == 'weak-password') {
                   devtools.log('Weak password');
-                }else if(e.code=='email-already-in-use'){
+                } else if (e.code == 'email-already-in-use') {
                   devtools.log('Email already in use');
-                }else {
+                } else {
                   devtools.log('Fire base authentication exception');
                   devtools.log('Error: $e ');
                 }
@@ -73,13 +78,14 @@ class _RegisterViewState extends State<RegisterView> {
             },
             child: const Text('Register'),
           ),
-          TextButton(onPressed: (){
-            Navigator.of(context).pushNamedAndRemoveUntil('/login/',(route)=>false);
-          }, child: const Text('Already registered? Login Here'))
+          TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+              },
+              child: const Text('Already registered? Login Here'))
         ],
       ),
     );
   }
 }
-
-
