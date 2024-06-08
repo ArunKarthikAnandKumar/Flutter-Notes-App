@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
         loginRoute: (context) => const LoginView(),
         RegisterRoute: (context) => const RegisterView(),
         NotesRoute: (context) => const NotesView(),
+        VerifyEmailRoute: (context) => const VerifyEmailView(),
       },
     );
   }
@@ -58,7 +59,7 @@ class HomePage extends StatelessWidget {
               return const NotesView();
             } else {
               devtools.log('Verify email first');
-              return const verifyEmailview();
+              return const VerifyEmailView();
             }
           } else {
             return const LoginView();

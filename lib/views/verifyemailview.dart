@@ -1,14 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mynotes_app/constants/routes.dart';
 
-class verifyEmailview extends StatefulWidget {
-  const verifyEmailview({super.key});
+class VerifyEmailView extends StatefulWidget {
+  const VerifyEmailView({super.key});
 
   @override
-  State<verifyEmailview> createState() => _verifyEmailviewState();
+  State<VerifyEmailView> createState() => _VerifyEmailViewState();
 }
 
-class _verifyEmailviewState extends State<verifyEmailview> {
+class _VerifyEmailViewState extends State<VerifyEmailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,16 +17,67 @@ class _verifyEmailviewState extends State<verifyEmailview> {
         title: const Text('Verify Email'),
         backgroundColor: Colors.lightBlue,
       ),
-      body: Column(
-        children: [
-          const Text('Verify Email First'),
-          TextButton(
-              onPressed: () async {
-                final user = FirebaseAuth.instance.currentUser;
-                await user?.sendEmailVerification();
-              },
-              child: const Text('Send Email Verification'))
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.email,
+                color: Colors.lightBlue,
+                size: 80,
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                "We've sent you an Email Verification. Please open it to verify your account.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                "If you haven't received the email verification, press the button below.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  final user = FirebaseAuth.instance.currentUser;
+                  await user?.sendEmailVerification();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Verification email sent!'),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white, backgroundColor: Colors.lightBlue, // Text color
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+                child: const Text('Send Email Verification'),
+              ),ElevatedButton(
+                onPressed: () async{
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.of(context).pushNamedAndRemoveUntil(RegisterRoute, (route)=>false,);
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white, backgroundColor: Colors.lightBlue, // Text color
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+                child: const Text('Restart'),
+              ),
+
+            ],
+          ),
+        ),
       ),
     );
   }
