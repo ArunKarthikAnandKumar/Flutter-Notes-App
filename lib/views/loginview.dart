@@ -1,10 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:mynotes_app/main.dart';
+import 'package:mynotes_app/services/auth/auth_service.dart';
 import 'dart:developer' as devtools show log;
-
 import '../constants/routes.dart';
+import '../services/auth/auth_exceptions.dart';
 import '../utilites/showErrorDialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -62,12 +60,12 @@ class _LoginViewState extends State<LoginView> {
               final password = _password.text;
 
               try {
-                await FirebaseAuth.instance.signInWithEmailAndPassword(
+                await AuthService.firebase().login(
                   email: email,
                   password: password,
                 );
-                final user=FirebaseAuth.instance.currentUser;
-                if(user?.emailVerified??false){
+                final user=AuthService.firebase().currentUser;
+                if(user?.isEmailVerified??false){
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     NotesRoute,
                         (route) => false,
@@ -79,26 +77,22 @@ class _LoginViewState extends State<LoginView> {
                   );
                 }
 
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'invalid-credential') {
-                  showErrorDialog(
-                    context,
-                    'User Not Found/Wrong Password',
-                  );
-                } else if (e.code == 'invalid-credential') {
-                  showErrorDialog(
-                    context,
-                    'User Not Found/Wrong Password',
-                  );
-                }else{
-                  showErrorDialog(
-                    context,
-                    'Error:${e.code}',
-                  );
-                }
-                devtools.log('Fire base authentication exception');
-                devtools.log('Error: $e ');
-              } catch (e) {
+              } on UserNotFoundAuthException catch(e){
+                showErrorDialog(
+                  context,
+                  'User Not Found',
+                );
+              } on WrongPasswordAuthException{
+                showErrorDialog(
+                  context,
+                  'Wrong Password',
+                );
+              }on GenericAuthException{
+                showErrorDialog(
+                  context,
+                  'Authentication Error',
+                );
+              }catch (e) {
                 showErrorDialog(
                   context,
                   e.toString(),
