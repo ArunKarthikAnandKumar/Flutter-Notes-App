@@ -1,4 +1,5 @@
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 
@@ -9,11 +10,17 @@ import 'package:mynotes_app/views/notesview.dart';
 import 'package:mynotes_app/views/registerview.dart';
 import 'package:mynotes_app/views/verifyemailview.dart';
 
+import 'firebase_options.dart';
+
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await AuthService.firebase().initialize();
+
   runApp(const MyApp());
 }
 
