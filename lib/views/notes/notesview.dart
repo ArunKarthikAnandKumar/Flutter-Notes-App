@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mynotes_app/constants/routes.dart';
-import 'package:mynotes_app/main.dart';
 import 'package:mynotes_app/services/auth/auth_service.dart';
 import 'package:mynotes_app/services/crud/notes_service.dart';
 import 'dart:developer' as devtools show log;
 import '../../enums/menu_action.dart';
+import '../../main.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -21,12 +21,6 @@ class _NotesViewState extends State<NotesView> {
   void initState() {
     _notesService = NotesService();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _notesService.close();
-    super.dispose();
   }
 
   @override
@@ -80,7 +74,26 @@ class _NotesViewState extends State<NotesView> {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
                     case ConnectionState.active:
-                      return const Text('Waiting for all Notes');
+                      if (snapshot.hasData) {
+                        final allNotes = snapshot.data as List<DatabaseNote>;
+                        devtools.log(allNotes.length.toString());
+                        return ListView.builder(
+                          itemCount: allNotes.length,
+                          itemBuilder: (context, index) {
+                            final note = allNotes[index];
+                            return ListTile(
+                              title: Text(
+                                note.text,
+                                maxLines: 1,
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return const CircularProgressIndicator();
+                      }
                     default:
                       return const CircularProgressIndicator();
                   }
@@ -88,7 +101,7 @@ class _NotesViewState extends State<NotesView> {
               );
 
             default:
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
           }
         },
       ),
