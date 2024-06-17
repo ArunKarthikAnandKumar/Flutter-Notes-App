@@ -4,7 +4,7 @@ import 'package:mynotes_app/main.dart';
 import 'package:mynotes_app/services/auth/auth_service.dart';
 import 'package:mynotes_app/services/crud/notes_service.dart';
 import 'dart:developer' as devtools show log;
-import '../enums/menu_action.dart';
+import '../../enums/menu_action.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -36,6 +36,12 @@ class _NotesViewState extends State<NotesView> {
         title: const Text('Main Ui'),
         backgroundColor: Colors.lightBlue,
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(NewNoteRoute);
+            },
+            icon: const Icon(Icons.add),
+          ),
           PopupMenuButton<MenuAction>(
             onSelected: (value) async {
               switch (value) {
@@ -70,8 +76,8 @@ class _NotesViewState extends State<NotesView> {
             case ConnectionState.done:
               return StreamBuilder(
                 stream: _notesService.allNotes,
-                builder: (context,snapshot){
-                  switch(snapshot.connectionState){
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
                       return const Text('Waiting for all Notes');
                     default:
