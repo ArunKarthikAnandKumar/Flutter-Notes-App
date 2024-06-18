@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:mynotes_app/services/auth/auth_service.dart';
 import 'package:mynotes_app/services/crud/notes_service.dart';
 
-class NewNoteView extends StatefulWidget {
-  const NewNoteView({super.key});
+class CreateUpdateNoteView extends StatefulWidget {
+  final DatabaseNote? note;
+
+  const CreateUpdateNoteView({
+    super.key,
+    this.note,
+  });
 
   @override
-  State<NewNoteView> createState() => _NewNoteViewState();
+  State<CreateUpdateNoteView> createState() => _CreateUpdateNoteViewState();
 }
 
-class _NewNoteViewState extends State<NewNoteView> {
+class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   DatabaseNote? _note;
   late final NotesService _notesService;
   late final TextEditingController _textController;
@@ -19,7 +24,7 @@ class _NewNoteViewState extends State<NewNoteView> {
     _notesService = NotesService();
     _textController = TextEditingController();
     super.initState();
-    createNewNote();
+    createOrGetExistingNote();
   }
 
   void _textControllerListener() async {
@@ -39,7 +44,15 @@ class _NewNoteViewState extends State<NewNoteView> {
     _textController.addListener(_textControllerListener);
   }
 
-  Future<void> createNewNote() async {
+  Future<void> createOrGetExistingNote() async {
+    final widgetNote = widget.note;
+    if (widgetNote != null) {
+      _note = widgetNote;
+      _textController.text = widgetNote.text;
+      _setupTextControllerListener();
+      return;
+    }
+
     final existingNote = _note;
     if (existingNote != null) {
       return;
@@ -102,8 +115,7 @@ class _NewNoteViewState extends State<NewNoteView> {
                   hintText: 'Start typing your notes...',
                   border: const OutlineInputBorder(),
                   focusedBorder: const OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.lightBlue, width: 2.0),
+                    borderSide: BorderSide(color: Colors.lightBlue, width: 2.0),
                   ),
                   filled: true,
                   fillColor: Colors.grey[200],

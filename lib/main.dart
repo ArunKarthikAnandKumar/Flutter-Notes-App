@@ -6,7 +6,7 @@ import 'dart:developer' as devtools show log;
 import 'package:mynotes_app/constants/routes.dart';
 import 'package:mynotes_app/services/auth/auth_service.dart';
 import 'package:mynotes_app/views/loginview.dart';
-import 'package:mynotes_app/views/notes/new_note_view.dart';
+import 'package:mynotes_app/views/notes/create_update_note_view.dart';
 import 'package:mynotes_app/views/notes/notesview.dart';
 import 'package:mynotes_app/views/registerview.dart';
 import 'package:mynotes_app/views/verifyemailview.dart';
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         loginRoute: (context) => const LoginView(),
         RegisterRoute: (context) => const RegisterView(),
         NotesRoute: (context) => const NotesView(),
-        NewNoteRoute: (context) => const NewNoteView(),
+        CreateOrUpdateRoute: (context) => const CreateUpdateNoteView(),
         VerifyEmailRoute: (context) => const VerifyEmailView(),
       },
     );
