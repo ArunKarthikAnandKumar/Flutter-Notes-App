@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:mynotes_app/constants/routes.dart';
 import 'package:mynotes_app/services/auth/auth_service.dart';
 import 'package:mynotes_app/services/crud/notes_service.dart';
+import 'package:mynotes_app/views/notes/notes_list_view.dart';
 import 'dart:developer' as devtools show log;
 import '../../enums/menu_action.dart';
-import '../../main.dart';
+import '../../utilites/dialog/logout_dialog.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -40,7 +41,7 @@ class _NotesViewState extends State<NotesView> {
             onSelected: (value) async {
               switch (value) {
                 case MenuAction.logout:
-                  bool shouldLogout = await showLogoutDialog(context);
+                  bool shouldLogout = await showLogOutDialog(context);
                   if (shouldLogout) {
                     await AuthService.firebase().logout();
                     devtools.log('User chose to log out');
@@ -76,19 +77,11 @@ class _NotesViewState extends State<NotesView> {
                     case ConnectionState.active:
                       if (snapshot.hasData) {
                         final allNotes = snapshot.data as List<DatabaseNote>;
-                        devtools.log(allNotes.length.toString());
-                        return ListView.builder(
-                          itemCount: allNotes.length,
-                          itemBuilder: (context, index) {
-                            final note = allNotes[index];
-                            return ListTile(
-                              title: Text(
-                                note.text,
-                                maxLines: 1,
-                                softWrap: true,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
+                        return NotesListView(
+                          notes: allNotes,
+                          onDeleteNote: (note) async {
+                            devtools.log(note.id.toString());
+                            await _notesService.deleteNote(id: note.id);
                           },
                         );
                       } else {

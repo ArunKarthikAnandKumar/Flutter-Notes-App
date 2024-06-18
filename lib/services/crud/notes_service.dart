@@ -3,7 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:mynotes_app/services/crud/crud_exceptions.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' show join;
-import 'package:path_provider/path_provider.dart' show MissingPlatformDirectoryException, getApplicationDocumentsDirectory;
+import 'package:path_provider/path_provider.dart'
+    show MissingPlatformDirectoryException, getApplicationDocumentsDirectory;
 
 class NotesService {
   Database? _db;
@@ -143,7 +144,8 @@ class NotesService {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final notes = await db.query(noteTable);
-    final noteList = notes.map((noteRow) => DatabaseNote.fromRow(noteRow)).toList();
+    final noteList =
+        notes.map((noteRow) => DatabaseNote.fromRow(noteRow)).toList();
     return noteList;
   }
 

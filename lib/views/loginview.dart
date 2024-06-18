@@ -3,7 +3,7 @@ import 'package:mynotes_app/services/auth/auth_service.dart';
 import 'dart:developer' as devtools show log;
 import '../constants/routes.dart';
 import '../services/auth/auth_exceptions.dart';
-import '../utilites/showErrorDialog.dart';
+import '../utilites/dialog/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -64,35 +64,34 @@ class _LoginViewState extends State<LoginView> {
                   email: email,
                   password: password,
                 );
-                final user=AuthService.firebase().currentUser;
-                if(user?.isEmailVerified??false){
+                final user = AuthService.firebase().currentUser;
+                if (user?.isEmailVerified ?? false) {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     NotesRoute,
-                        (route) => false,
+                    (route) => false,
                   );
-                }else{
+                } else {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     VerifyEmailRoute,
-                        (route) => false,
+                    (route) => false,
                   );
                 }
-
-              } on UserNotFoundAuthException catch(e){
+              } on UserNotFoundAuthException catch (e) {
                 showErrorDialog(
                   context,
                   'User Not Found',
                 );
-              } on WrongPasswordAuthException{
+              } on WrongPasswordAuthException {
                 showErrorDialog(
                   context,
                   'Wrong Password',
                 );
-              }on GenericAuthException{
+              } on GenericAuthException {
                 showErrorDialog(
                   context,
                   'Authentication Error',
                 );
-              }catch (e) {
+              } catch (e) {
                 showErrorDialog(
                   context,
                   e.toString(),
