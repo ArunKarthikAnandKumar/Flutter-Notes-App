@@ -1,7 +1,10 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes_app/constants/routes.dart';
+import 'package:mynotes_app/main.dart';
 import 'package:mynotes_app/services/auth/auth_service.dart';
+import 'package:mynotes_app/services/auth/bloc/auth_bloc.dart';
+import 'package:mynotes_app/services/auth/bloc/auth_event.dart';
 
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({super.key});
@@ -45,36 +48,44 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
-                  await AuthService.firebase().sendEmailVerification();
+                  context.read<AuthBloc>().add(
+                        const AuthEventSendEmailVerification(),
+                      );
+
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('Verification email sent!'),
                     ),
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.lightBlue, // Text color
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.lightBlue, // Text color
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
                 child: const Text('Send Email Verification'),
-              ),ElevatedButton(
-                onPressed: () async{
-                  await AuthService.firebase().logout();
-                  Navigator.of(context).pushNamedAndRemoveUntil(RegisterRoute, (route)=>false,);
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  context.read<AuthBloc>().add(
+                        const AuthEventLogOut(),
+                      );
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.lightBlue, // Text color
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.lightBlue, // Text color
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
                 child: const Text('Restart'),
               ),
-
             ],
           ),
         ),
