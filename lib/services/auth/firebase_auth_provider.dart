@@ -100,3 +100,5 @@ class FirebaseAuthProvider implements AuthProvider {
     );
   }
 }
+
+  

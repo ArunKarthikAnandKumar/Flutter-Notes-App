@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes_app/constants/routes.dart';
+import 'package:mynotes_app/main.dart';
 import 'package:mynotes_app/services/auth/auth_service.dart';
+import 'package:mynotes_app/services/auth/bloc/auth_event.dart';
 import 'package:mynotes_app/services/cloud/cloud_note.dart';
 import 'package:mynotes_app/views/notes/notes_list_view.dart';
 import 'dart:developer' as devtools show log;
 import '../../enums/menu_action.dart';
+import '../../services/auth/bloc/auth_bloc.dart';
 import '../../services/cloud/firebase_cloude_storage.dart';
 import '../../utilites/dialog/logout_dialog.dart';
 
@@ -44,10 +48,8 @@ class _NotesViewState extends State<NotesView> {
                 case MenuAction.logout:
                   bool shouldLogout = await showLogOutDialog(context);
                   if (shouldLogout) {
-                    await AuthService.firebase().logout();
+                    context.read<AuthBloc>().add(const AuthEventLogOut());
                     devtools.log('User chose to log out');
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil(loginRoute, (_) => false);
                   } else {
                     devtools.log('User canceled logout');
                   }
@@ -76,8 +78,7 @@ class _NotesViewState extends State<NotesView> {
                 return NotesListView(
                   notes: allNotes,
                   onDeleteNote: (note) async {
-                    await _notesService.deleteNote(
-                        documentId: note.documentId);
+                    await _notesService.deleteNote(documentId: note.documentId);
                   },
                   onTap: (note) {
                     Navigator.of(context).pushNamed(
