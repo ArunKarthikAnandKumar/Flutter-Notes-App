@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes_app/constants/routes.dart';
+import 'package:mynotes_app/helper/loading/loading_screen.dart';
 import 'package:mynotes_app/services/auth/auth_service.dart';
 import 'package:mynotes_app/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes_app/services/auth/bloc/auth_event.dart';
@@ -42,7 +43,6 @@ class MyApp extends StatelessWidget {
         child: const HomePage(),
       ),
       routes: {
-       
         CreateOrUpdateRoute: (context) => const CreateUpdateNoteView(),
       },
     );
@@ -55,7 +55,16 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<AuthBloc>().add(const AuthEventInitialize());
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+    return BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
+      if (state.isLoading) {
+        LoadingScreen().show(
+          context: context,
+          text: state.loadingText ?? 'Please wait a Moment',
+        );
+      } else {
+        LoadingScreen().hide();
+      }
+    }, builder: (context, state) {
       if (state is AuthStateLoggedIn) {
         return const NotesView();
       } else if (state is AuthStateNeedsVerification) {
