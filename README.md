@@ -32,5 +32,5 @@ This repository contains a basic notes app developed using Flutter. It allows us
 
 ### How to Use
 
-To use the app, you can download the APK file from the `builds` folder in this repository and install it on your Android device.
+To use the app, you can download the APK file from the `APK` folder in this repository and install it on your Android device.
 
