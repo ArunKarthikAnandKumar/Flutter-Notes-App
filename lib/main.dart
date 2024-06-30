@@ -7,7 +7,6 @@ import 'package:mynotes_app/services/auth/auth_service.dart';
 import 'package:mynotes_app/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes_app/services/auth/bloc/auth_event.dart';
 import 'package:mynotes_app/services/auth/bloc/auth_state.dart';
-import 'package:mynotes_app/services/auth/firebase_auth_provider.dart';
 import 'package:mynotes_app/views/forgot_password_view.dart';
 import 'package:mynotes_app/views/loginview.dart';
 import 'package:mynotes_app/views/notes/create_update_note_view.dart';
@@ -16,8 +15,7 @@ import 'package:mynotes_app/views/registerview.dart';
 import 'package:mynotes_app/views/splashscreen.dart';
 import 'package:mynotes_app/views/verifyemailview.dart';
 
-import 'firebase_options.dart'; // Import SplashScreen
-
+import 'firebase_options.dart'; 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -40,10 +38,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
       ),
-      home: BlocProvider(
-        create: (context) => AuthBloc(FirebaseAuthProvider()),
-        child: const HomePage(),
-      ),
+      home: const SplashScreen(),
       routes: {
         CreateOrUpdateRoute: (context) => const CreateUpdateNoteView(),
       },

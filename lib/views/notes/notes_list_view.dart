@@ -5,12 +5,12 @@ import '../../utilites/dialog/delete_dialog.dart';
 
 typedef NoteCallback = void Function(CloudNote note);
 
-class NotesListView extends StatelessWidget {
+class NotesGridView extends StatelessWidget {
   final Iterable<CloudNote> notes;
   final NoteCallback onDeleteNote;
   final NoteCallback onTap;
 
-  const NotesListView({
+  const NotesGridView({
     super.key,
     required this.notes,
     required this.onDeleteNote,
@@ -19,11 +19,17 @@ class NotesListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // Number of columns in the grid
+        mainAxisSpacing: 10, // Spacing between rows
+        crossAxisSpacing: 10, // Spacing between columns
+        childAspectRatio: 0.75, // Aspect ratio of each grid item
+      ),
       itemCount: notes.length,
       itemBuilder: (context, index) {
         final note = notes.elementAt(index);
-        return ListTile(
+        return GestureDetector(
           onTap: () {
             Navigator.push(
               context,
@@ -32,20 +38,40 @@ class NotesListView extends StatelessWidget {
               ),
             );
           },
-          title: Text(
-            note.text,
-            maxLines: 1,
-            softWrap: true,
-            overflow: TextOverflow.ellipsis,
-          ),
-          trailing: IconButton(
-            onPressed: () async {
-              final shouldDelete = await showDeleteDialog(context);
-              if (shouldDelete) {
-                onDeleteNote(note);
-              }
-            },
-            icon: const Icon(Icons.delete),
+          child: Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 8),
+                  Text(
+                    note.text,
+                    maxLines: 5,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        onPressed: () async {
+                          final shouldDelete = await showDeleteDialog(context);
+                          if (shouldDelete) {
+                            onDeleteNote(note);
+                          }
+                        },
+                        icon: const Icon(Icons.delete),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
         );
       },

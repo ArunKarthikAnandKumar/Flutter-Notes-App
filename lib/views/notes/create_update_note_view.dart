@@ -22,6 +22,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   CloudNote? _note;
   late final FirebaseCloudStorage _notesService;
   late final TextEditingController _textController;
+  FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -93,51 +94,78 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     _deleteNoteIfTextIsEmpty();
     _saveNoteIfTextIsNotEmpty();
     _textController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('New Note'),
-        backgroundColor: Colors.lightBlue,
-        actions: [
-          IconButton(
-              onPressed: () async {
-                final text = _textController.text;
-                if (_note == null || text.isEmpty) {
-                  await showCannotShareEmptyNoteDialog(context);
-                } else {
-                  Share.share(text);
-                }
-              },
-              icon: const Icon(Icons.share))
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: _note == null
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : TextField(
-                controller: _textController,
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                style: const TextStyle(fontSize: 18.0, color: Colors.black87),
-                decoration: InputDecoration(
-                  hintText: 'Start typing your notes...',
-                  border: const OutlineInputBorder(),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.lightBlue, width: 2.0),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'New Note',
+                    style: TextStyle(
+                      color: Colors.lightBlue,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 20.0, horizontal: 20.0),
+                  IconButton(
+                    onPressed: () async {
+                      final text = _textController.text;
+                      if (_note == null || text.isEmpty) {
+                        await showCannotShareEmptyNoteDialog(context);
+                      } else {
+                        Share.share(text);
+                      }
+                    },
+                    icon: const Icon(Icons.share),
+                    color: Colors.lightBlue,
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  if (!_focusNode.hasFocus) {
+                    _focusNode.requestFocus();
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: _textController,
+                          focusNode: _focusNode,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          style: const TextStyle(
+                              fontSize: 18.0, color: Colors.black87),
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Start typing your notes...',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
+            ),
+          ],
+        ),
       ),
     );
   }
